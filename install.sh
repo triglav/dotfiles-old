@@ -25,7 +25,6 @@ for name in *; do
         # decrement $cutline
         cutline=`expr $cutline - 1`
         #let "cutline = $cutline - 1"
-        echo "Updating $target"
         # read the lines till the $cutline and push them to a temp file
         head -n "$cutline" "$target" > update_tmp
         # search for $cutstring backwards in the local file
@@ -39,8 +38,14 @@ for name in *; do
           # attach the whole content to the temp file
           cat "$name" >> update_tmp
         fi
-        # overwrite the dotfile in the home directory with generated temp file
-        mv update_tmp "$target"
+        # if there are any changes
+        if [ -n "`comm -13 --nocheck-order update_tmp "$target"`" ]; then
+          # overwrite the dotfile in the home directory with generated temp file
+          echo "Updating $target"
+          mv update_tmp "$target"
+        else
+          rm -f update_tmp
+        fi
       else
         echo "WARNING: $target exists but is not a symlink."
       fi
