@@ -41,8 +41,15 @@ for name in *; do
         # if there are any changes
         if [ -n "`comm -13 --nocheck-order update_tmp "$target"`" ]; then
           # overwrite the dotfile in the home directory with generated temp file
-          echo "Updating $target"
-          mv update_tmp "$target"
+          while true; do
+            echo "WARNING: There is a conflict with '$target'."
+            read -p "Do you wish to overwrite it? [yna] " yna
+            case $yna in
+              [Yy] ) echo "Overwriting '$target'."; mv update_tmp "$target"; break;;
+              [Nn] ) echo "Skipping '$target'."; rm -f update_tmp; break;;
+              [Aa] ) echo "Aborting."; rm -f update_tmp; return;;
+            esac
+          done
         else
           rm -f update_tmp
         fi
