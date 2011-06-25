@@ -54,7 +54,15 @@ for name in *; do
           rm -f update_tmp
         fi
       else
-        echo "WARNING: $target exists but is not a symlink."
+        while true; do
+          echo "WARNING: '$target' exists but is not a symlink."
+          read -p "Do you wish to overwrite it? [yna] " yna
+          case $yna in
+            [Yy] ) echo "Overwriting '$target'."; rm -f "$target"; ln -s "$PWD/$name" "$target"; break;;
+            [Nn] ) echo "Skipping '$target'."; break;;
+            [Aa] ) echo "Aborting."; return;;
+          esac
+        done
       fi
     fi
   else
