@@ -68,7 +68,7 @@ for name in *; do
   else
     # skip the current script file
     if [ "$name" != "install.sh" ]; then
-      echo "Creating $target"
+      echo "Creating '$target'."
       # if the file contains $cutstring, create a copy of it
       if [ -n "`grep "$cutstring" "$name"`" ]; then
         cp "$PWD/$name" "$target"
