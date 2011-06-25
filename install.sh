@@ -7,8 +7,10 @@
 # I have modified/fixed it a little for Ubuntu's (da)sh.
 
 cutstring="DO NOT EDIT BELOW THIS LINE"
+basedir="`dirname $0`"
 
-for name in *; do
+for file in $basedir/*; do
+  name="`basename $file`"
   target="$HOME/sandbox/.$name"
   # if the target exists
   if [ -e "$target" ]; then
@@ -28,15 +30,15 @@ for name in *; do
         # read the lines till the $cutline and push them to a temp file
         head -n "$cutline" "$target" > update_tmp
         # search for $cutstring backwards in the local file
-        startline=`tac "$name" | grep -n -m1 "$cutstring" | sed "s/:.*//"`
+        startline=`tac "$file" | grep -n -m1 "$cutstring" | sed "s/:.*//"`
         #startline=`tail -r "$name" | grep -n -m1 "$cutstring" | sed "s/:.*//"`
         # if the $cutstring line has been found
         if [ -n "$startline" ]; then
           # attach the content below the line to the temp file
-          tail -n "$startline" "$name" >> update_tmp
+          tail -n "$startline" "$file" >> update_tmp
         else
           # attach the whole content to the temp file
-          cat "$name" >> update_tmp
+          cat "$file" >> update_tmp
         fi
         # if there are any changes
         if [ -n "`comm -13 --nocheck-order update_tmp "$target"`" ]; then
@@ -58,7 +60,7 @@ for name in *; do
           echo "WARNING: '$target' exists but is not a symlink."
           read -p "Do you wish to overwrite it? [yna] " yna
           case $yna in
-            [Yy] ) echo "Overwriting '$target'."; rm -f "$target"; ln -s "$PWD/$name" "$target"; break;;
+            [Yy] ) echo "Overwriting '$target'."; rm -f "$target"; ln -s "`readlink -f $file`" "$target"; break;;
             [Nn] ) echo "Skipping '$target'."; break;;
             [Aa] ) echo "Aborting."; return;;
           esac
@@ -70,11 +72,11 @@ for name in *; do
     if [ "$name" != "install.sh" ]; then
       echo "Creating '$target'."
       # if the file contains $cutstring, create a copy of it
-      if [ -n "`grep "$cutstring" "$name"`" ]; then
-        cp "$PWD/$name" "$target"
+      if [ -n "`grep "$cutstring" "$file"`" ]; then
+        cp "$file" "$target"
       # otherwise create a symbolic link
       else
-        ln -s "$PWD/$name" "$target"
+        ln -s "`readlink -f $file`" "$target"
       fi
     fi
   fi
