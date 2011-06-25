@@ -45,9 +45,18 @@ for file in $basedir/*; do
             echo "WARNING: There is a conflict with '$target'."
             read -p "Do you wish to overwrite it? [yna] " yna
             case $yna in
-              [Yy] ) echo "Overwriting '$target'."; mv update_tmp "$target"; break;;
-              [Nn] ) echo "Skipping '$target'."; rm -f update_tmp; break;;
-              [Aa] ) echo "Aborting."; rm -f update_tmp; return;;
+              [Yy] )
+                echo "Overwriting '$target'."
+                mv update_tmp "$target"
+                break;;
+              [Nn] )
+                echo "Skipping '$target'."
+                rm -f update_tmp
+                break;;
+              [Aa] )
+                echo "Aborting."
+                rm -f update_tmp
+                return;;
             esac
           done
         else
@@ -58,9 +67,17 @@ for file in $basedir/*; do
           echo "WARNING: '$target' exists but is not a symlink."
           read -p "Do you wish to overwrite it? [yna] " yna
           case $yna in
-            [Yy] ) echo "Overwriting '$target'."; rm -f "$target"; ln -s "`readlink -f $file`" "$target"; break;;
-            [Nn] ) echo "Skipping '$target'."; break;;
-            [Aa] ) echo "Aborting."; return;;
+            [Yy] )
+              echo "Overwriting '$target'."
+              rm -f "$target"
+              ln -s "`readlink -f $file`" "$target"
+              break;;
+            [Nn] )
+              echo "Skipping '$target'."
+              break;;
+            [Aa] )
+              echo "Aborting."
+              return;;
           esac
         done
       fi
