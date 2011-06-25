@@ -1,0 +1,25 @@
+# ADD LOCAL CONFIGURATION HERE
+[user]
+  name = Triglav
+  email = trojhlav@gmail.com
+# DO NOT EDIT BELOW THIS LINE
+[alias]
+  a = add
+  br = branch
+  c = commit -m
+  ca = commit --amend
+  ci = commit
+  d = diff
+  dc = diff --cached
+  pl = pull
+  ps = push
+  st = status
+[apply]
+  whitespace = nowarn
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+[format]
+  pretty = %C(yellow)%h%Creset %s %C(red)(%an, %cr)%Creset
+# vim:ft=gitconfig
