@@ -26,12 +26,10 @@ for file in $basedir/*; do
       if [ -n "$cutline" ]; then
         # decrement $cutline
         cutline=`expr $cutline - 1`
-        #let "cutline = $cutline - 1"
         # read the lines till the $cutline and push them to a temp file
         head -n "$cutline" "$target" > update_tmp
         # search for $cutstring backwards in the local file
         startline=`tac "$file" | grep -n -m1 "$cutstring" | sed "s/:.*//"`
-        #startline=`tail -r "$name" | grep -n -m1 "$cutstring" | sed "s/:.*//"`
         # if the $cutstring line has been found
         if [ -n "$startline" ]; then
           # attach the content below the line to the temp file
