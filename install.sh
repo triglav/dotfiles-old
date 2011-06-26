@@ -8,10 +8,48 @@
 
 cutstring="DO NOT EDIT BELOW THIS LINE"
 basedir="`dirname $0`"
+target_dir="$HOME"
+
+usage()
+{
+  echo "Usage: ./install.sh [OPTION]..."
+  echo "Install dotfiles to the \$HOME directory"
+  echo
+  echo "  -s, --sand-box PATH     dotfiles will be installed to this directory"
+  echo "                          instead of \$HOME. Great option for testing."
+  echo "  -h, --help              display this help and exit"
+  echo
+  echo "Report bugs to <trojhlav@gmail.com>"
+}
+
+while [ "$1" != "" ]; do
+  case $1 in
+    -s | --sand-box )
+      shift
+      if [ ! -n "$1" ]; then
+        usage
+        exit
+      elif [ -d "$1" ]; then
+        target_dir="`readlink -f $1`"
+      else
+        echo "$1: invalid directory"
+        exit
+      fi
+      ;;
+    -h | --help )
+      usage
+      exit
+      ;;
+    * )
+      usage
+      exit 1
+  esac
+  shift
+done
 
 for file in $basedir/*; do
   name="`basename $file`"
-  target="$HOME/sandbox/.$name"
+  target="$target_dir/.$name"
   # if the target exists
   if [ -e "$target" ]; then
     # and if it is not a sym link
