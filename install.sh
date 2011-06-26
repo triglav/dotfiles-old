@@ -9,6 +9,7 @@
 
 cutstring="DO NOT EDIT BELOW THIS LINE"
 basedir="`dirname $0`"
+replace_all=0
 target_dir="$HOME"
 
 usage()
@@ -16,6 +17,7 @@ usage()
   echo "Usage: ./install.sh [OPTION]..."
   echo "Install dotfiles to the \$HOME directory"
   echo
+  echo "  -r, --replace-all       replace all target files without asking"
   echo "  -s, --sand-box PATH     dotfiles will be installed to this directory"
   echo "                          instead of \$HOME. Great option for testing."
   echo "  -h, --help              display this help and exit"
@@ -23,8 +25,23 @@ usage()
   echo "Report bugs to <trojhlav@gmail.com>"
 }
 
+overwrite_file()
+{
+  echo "Overwriting '$2'."
+  mv $1 "$2"
+}
+overwrite_link()
+{
+  echo "Overwriting '$2'."
+  rm -f "$2"
+  ln -s "`readlink -f $1`" "$2"
+}
+
 while [ "$1" != "" ]; do
   case $1 in
+    -r | --replace-all )
+      replace_all=1
+      ;;
     -s | --sand-box )
       shift
       if [ ! -n "$1" ]; then
@@ -77,16 +94,18 @@ for file in $basedir/*; do
           # attach the whole content to the temp file
           cat "$file" >> update_tmp
         fi
-        # if there are any changes
-        if [ -n "`comm -13 --nocheck-order update_tmp "$target"`" ]; then
+        # if we want to replace all
+        if [ "$replace_all" = "1" ]; then
+          overwrite_file update_tmp "$target"
+        # otherwise check if there are any changes
+        elif [ -n "`comm -13 --nocheck-order update_tmp "$target"`" ]; then
           # overwrite the dotfile in the home directory with generated temp file
           while true; do
             echo "WARNING: There is a conflict with '$target'."
             read -p "Do you wish to overwrite it? [yna] " yna
             case $yna in
               [Yy] )
-                echo "Overwriting '$target'."
-                mv update_tmp "$target"
+                overwrite_file update_tmp "$target"
                 break;;
               [Nn] )
                 echo "Skipping '$target'."
@@ -101,15 +120,15 @@ for file in $basedir/*; do
         else
           rm -f update_tmp
         fi
+      elif [ "$replace_all" = "1" ]; then
+        overwrite_link "$file" "$target"
       else
         while true; do
           echo "WARNING: '$target' exists but is not a symlink."
           read -p "Do you wish to overwrite it? [yna] " yna
           case $yna in
             [Yy] )
-              echo "Overwriting '$target'."
-              rm -f "$target"
-              ln -s "`readlink -f $file`" "$target"
+              overwrite_link "$file" "$target"
               break;;
             [Nn] )
               echo "Skipping '$target'."
