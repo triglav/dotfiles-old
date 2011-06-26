@@ -141,8 +141,8 @@ for file in $basedir/*; do
       fi
     fi
   else
-    # skip the current script file
-    if [ "$name" != "install.sh" ]; then
+    # skip the current script file and the readme file
+    if [ "$name" != "install.sh" ] && [ "$name" != "README.md" ]; then
       echo "Creating '$target'."
       # if the file contains $cutstring, create a copy of it
       if [ -n "`grep "$cutstring" "$file"`" ]; then
