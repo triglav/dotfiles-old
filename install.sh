@@ -120,8 +120,6 @@ for file in $basedir/*; do
         else
           rm -f update_tmp
         fi
-      elif [ "$replace_all" = "1" ]; then
-        overwrite_link "$file" "$target"
       else
         while true; do
           echo "WARNING: '$target' exists but is not a symlink."
@@ -139,17 +137,26 @@ for file in $basedir/*; do
           esac
         done
       fi
+    # if it is a symlink, but we still want to refresh/overwrite it
+    elif [ "$replace_all" = "1" ]; then
+      overwrite_link "$file" "$target"
     fi
   else
     # skip the current script file and the readme file
     if [ "$name" != "install.sh" ] && [ "$name" != "README.md" ]; then
-      echo "Creating '$target'."
-      # if the file contains $cutstring, create a copy of it
-      if [ -n "`grep "$cutstring" "$file"`" ]; then
-        cp "$file" "$target"
-      # otherwise create a symbolic link
+      # if it is a link, it is invalid, we want to overwrite it
+      if [ -h "$target" ]; then
+        echo "Found an invalid link '$target'."
+        overwrite_link "$file" "$target"
       else
-        ln -s "`readlink -f $file`" "$target"
+        echo "Creating '$target'."
+        # if the file contains $cutstring, create a copy of it
+        if [ -n "`grep "$cutstring" "$file"`" ]; then
+          cp "$file" "$target"
+        # otherwise create a symbolic link
+        else
+          ln -s "`readlink -f $file`" "$target"
+        fi
       fi
     fi
   fi
