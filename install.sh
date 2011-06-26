@@ -3,8 +3,9 @@
 # install.sh - installs dotfiles from git repository to the $HOME directory
 # Maintainer: Triglav <trojhlav@gmail.com>
 #
-# Credit goes to 'https://github.com/jferris/config_files'
-# I have modified/fixed it a little for Ubuntu's (da)sh.
+# Credit for the main idea of this file goes to
+# 'https://github.com/jferris/config_files'
+# I have modified/fixed it a little for my needs.
 
 cutstring="DO NOT EDIT BELOW THIS LINE"
 basedir="`dirname $0`"
