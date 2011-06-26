@@ -22,7 +22,7 @@ usage()
   echo "                          instead of \$HOME. Great option for testing."
   echo "  -h, --help              display this help and exit"
   echo
-  echo "Report bugs to <trojhlav@gmail.com>"
+  echo "Report bugs to 'https://github.com/triglav/dotfiles/issues'"
 }
 
 overwrite_file()
