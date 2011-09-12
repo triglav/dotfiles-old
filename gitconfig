@@ -9,6 +9,7 @@
   c = commit -m
   ca = commit --amend
   ci = commit
+  co = checkout
   d = diff
   dc = diff --cached
   pl = pull
